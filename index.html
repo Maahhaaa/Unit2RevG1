@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Quest | Unit 2 Challenge Arena</title>
+<style>
+:root{
+ --bg:#080b18;--panel:#11182b;--panel2:#151f38;--line:#293655;
+ --text:#eef3ff;--muted:#9aa9c8;--cyan:#45e4e8;--violet:#a78bfa;
+ --pink:#ff6fb5;--lime:#b8f36b;--gold:#ffd166;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 12% 0%,#18294c 0,transparent 38%),radial-gradient(ellipse at 90% 12%,#291b4c 0,transparent 32%),var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif;min-height:100vh}
+button,input{font:inherit}
+button{cursor:pointer}
+.shell{max-width:1180px;margin:auto;padding:28px 22px 60px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:34px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.12em;font-size:14px}
+.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#07101d;font-size:22px;box-shadow:0 0 25px #45e4e855}
+.pill{border:1px solid #354362;background:#10182a;color:var(--muted);border-radius:99px;padding:9px 14px;font-size:12px;letter-spacing:.08em}
+.hero{display:grid;grid-template-columns:1.4fr .8fr;gap:24px;align-items:stretch;margin-bottom:26px}
+.hero-main,.stats{border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,#141e35ee,#11182bea);padding:30px;position:relative;overflow:hidden}
+.hero-main:after{content:"</>";position:absolute;right:25px;bottom:-25px;font-size:130px;font-weight:900;color:#ffffff08;transform:rotate(-12deg)}
+.eyebrow{color:var(--cyan);font-weight:800;font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+h1{font-size:clamp(36px,5vw,58px);line-height:.98;margin:13px 0 14px;letter-spacing:-.04em}
+h1 span{color:var(--cyan)}
+.hero p{max-width:610px;color:var(--muted);line-height:1.65;margin:0}
+.stats{display:flex;flex-direction:column;justify-content:space-between;gap:18px}
+.statline{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+.statnum{font-size:34px;font-weight:900;color:var(--lime)}
+.progress{height:9px;border-radius:10px;background:#26324c;overflow:hidden}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .3s}
+.xp{font-size:12px;color:var(--gold);font-weight:800;letter-spacing:.08em}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:22px 0}
+.search{flex:1;min-width:220px;background:#0f1729;border:1px solid var(--line);border-radius:13px;padding:13px 15px;color:var(--text);outline:none}
+.search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #45e4e81a}
+.random{border:0;border-radius:13px;padding:13px 17px;color:#07101d;font-weight:900;background:linear-gradient(110deg,var(--cyan),#9bf3c2)}
+.lesson-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0 24px}
+.lesson-tab{border:1px solid var(--line);border-radius:14px;background:#10182a;color:var(--muted);padding:14px 12px;text-align:left;min-height:90px;transition:.2s}
+.lesson-tab:hover{transform:translateY(-2px);border-color:#7183ad}
+.lesson-tab.active{background:linear-gradient(145deg,#19324a,#272044);border-color:var(--cyan);color:var(--text);box-shadow:0 0 22px #45e4e81a}
+.lesson-tab b{display:block;color:var(--cyan);font-size:11px;letter-spacing:.12em;margin-bottom:8px}
+.lesson-tab span{font-size:12px;line-height:1.35;display:block;font-weight:700}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:28px 0 16px}
+.section-head h2{font-size:24px;margin:0}
+.section-head p{color:var(--muted);font-size:13px;margin:6px 0 0}
+.count{color:var(--muted);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.card{background:linear-gradient(145deg,#131d33,#101729);border:1px solid var(--line);border-radius:19px;padding:19px;position:relative;transition:.2s}
+.card:hover{border-color:#53688e;transform:translateY(-2px)}
+.card.solved{border-color:#8dbb57;background:linear-gradient(145deg,#172b2a,#111a2b)}
+.card-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}
+.qtag{font-size:11px;color:var(--cyan);font-weight:900;letter-spacing:.1em}
+.difficulty{font-size:10px;padding:5px 9px;border-radius:99px;background:#332c4b;color:#c9b8ff;text-transform:uppercase;letter-spacing:.08em}
+.question{font-size:15px;line-height:1.6;font-weight:650;white-space:pre-wrap}
+.code{font-family:Consolas,Monaco,monospace;background:#090f1e;border:1px solid #26334e;color:#c5f6e7;padding:12px 13px;border-radius:11px;margin:12px 0;white-space:pre-wrap;overflow-x:auto;font-size:12px;line-height:1.55}
+.options{display:grid;gap:7px;margin:12px 0}
+.option{border:1px solid #2b3854;border-radius:9px;padding:8px 10px;color:#c5d0e8;font-size:13px}
+.actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.answer-btn,.solved-btn{border:1px solid #3b4d6e;background:#1b2942;color:var(--text);padding:9px 13px;border-radius:10px;font-size:12px;font-weight:800}
+.answer-btn{border-color:#397a82;color:var(--cyan)}
+.answer-btn:hover{background:#17353b}
+.solved-btn{color:var(--lime)}
+.solved-btn.done{background:#253b26;border-color:#779f4b}
+.answer{display:none;margin-top:14px;padding:14px;border-radius:12px;background:#0c1d25;border:1px solid #28545a;color:#d6f8eb;font-size:13px;line-height:1.6;white-space:pre-wrap}
+.answer.show{display:block;animation:reveal .25s ease}
+.answer strong{color:var(--lime)}
+@keyframes reveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.empty{grid-column:1/-1;padding:35px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
+.footer{text-align:center;color:#7483a3;font-size:11px;margin-top:38px;line-height:1.6}
+@media(max-width:850px){.hero{grid-template-columns:1fr}.lesson-grid{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}}
+@media(max-width:480px){.shell{padding:18px 13px 40px}.hero-main,.stats{padding:22px}.lesson-grid{grid-template-columns:1fr 1fr}.topbar{margin-bottom:22px}.pill{display:none}}
+
+/* LIGHT THEME — friendly pastel coding adventure */
+:root{
+ --bg:#f7f8ff;--panel:#ffffff;--panel2:#f0f3ff;--line:#e2e6f3;
+ --text:#293451;--muted:#74809d;--cyan:#4b83e6;--violet:#9275df;
+ --pink:#ef83b4;--lime:#62b78b;--gold:#e6a83f;
+}
+body{
+ background:
+  radial-gradient(ellipse at 8% 4%,#e3efff 0,transparent 34%),
+  radial-gradient(ellipse at 94% 10%,#fce8f2 0,transparent 30%),
+  radial-gradient(ellipse at 55% 100%,#edf8f0 0,transparent 38%),var(--bg);
+ color:var(--text);
+}
+.shell{max-width:1220px}
+.brand{color:#34415f;letter-spacing:.09em}
+.logo{background:linear-gradient(135deg,#b9d7ff,#d9caff);color:#435b91;box-shadow:0 5px 16px #9bb9e955}
+.pill{border:1px solid #e0e5f2;background:#ffffffb8;color:#71809f}
+.hero{gap:18px}
+.hero-main,.stats{
+ border:1px solid #e3e8f5;border-radius:28px;
+ background:linear-gradient(135deg,#ffffff 0%,#f4f7ff 100%);
+ box-shadow:0 12px 35px #536a9a12;
+}
+.hero-main{padding:32px}
+.hero-main:after{color:#8ca8df12}
+.eyebrow{color:#6485d4}
+h1{color:#293451}
+h1 span{color:#6f72d7}
+.hero p{color:#78839d}
+.stats{background:linear-gradient(145deg,#fff,#f5f1ff)}
+.statline{color:#77829d}
+.statnum{color:#58a982}
+.progress{background:#e8ebf5}
+.progress>div{background:linear-gradient(90deg,#75c8ad,#8c83e8)}
+.xp{color:#d99b39}
+.search{background:#fff;border:1px solid #e1e6f2;color:#34415f;box-shadow:0 4px 14px #566b9910}
+.search:focus{border-color:#8ca9e8;box-shadow:0 0 0 3px #8ca9e822}
+.search::placeholder{color:#9aa4ba}
+.random{color:#fff;background:linear-gradient(110deg,#709ce8,#9c86e4);box-shadow:0 6px 15px #7c8fd833}
+.lesson-grid{gap:12px}
+.lesson-tab{
+ background:#ffffffd9;border:1px solid #e3e8f3;color:#73809b;
+ border-radius:18px;min-height:116px;padding:13px 14px;
+ box-shadow:0 5px 15px #5a6d9910;
+}
+.lesson-tab:hover{transform:translateY(-3px);border-color:#b8c9ef;box-shadow:0 9px 18px #5a6d9918}
+.lesson-tab.active{
+ background:linear-gradient(145deg,#edf4ff,#f4efff);
+ border-color:#9ab5ec;color:#34415f;box-shadow:0 7px 20px #809bd522;
+}
+.lesson-tab b{color:#6c85d2}
+.lesson-tab span:not(.lesson-icon){font-size:12px}
+.lesson-icon{font-size:25px;display:block;margin-bottom:7px}
+.section-head h2{color:#303c59}
+.section-head p,.count{color:#8390a8}
+.card{
+ background:linear-gradient(145deg,#fff,#fbfcff);
+ border:1px solid #e4e9f4;border-radius:21px;padding:20px;
+ box-shadow:0 7px 22px #536a9a0d;
+}
+.card:hover{border-color:#bdccef;box-shadow:0 12px 24px #536a9a17}
+.card.solved{border-color:#a8d8bd;background:linear-gradient(145deg,#f2fbf5,#fff)}
+.qtag{color:#6688d9}
+.difficulty{background:#fff2dc;color:#bd8431}
+.code{background:#f2f5fc;border:1px solid #e2e8f5;color:#465a7c}
+.option{border:1px solid #e4e8f2;color:#687691;background:#fafbff}
+.answer-btn,.solved-btn{border:1px solid #dce4f2;background:#f5f7fd;color:#586887}
+.answer-btn{border-color:#c6d7f7;color:#557bd0}
+.answer-btn:hover{background:#edf3ff}
+.solved-btn{color:#4d9a76}
+.solved-btn.done{background:#edf8f1;border-color:#b9dfc8}
+.answer{background:#f0faf5;border:1px solid #ccebd9;color:#456b59}
+.answer strong{color:#4c9b73}
+.empty{color:#8490a8;border-color:#dce3f1}
+.footer{color:#9aa4b7}
+.mascot-stage{display:flex;align-items:center;gap:18px;margin-top:24px;position:relative;z-index:1}
+.mascot{display:flex;align-items:center;gap:12px;max-width:430px;background:#fff;border:1px solid #e6eafa;border-radius:18px;padding:10px 15px;box-shadow:0 6px 18px #657ba51a;color:#687590;font-size:12px;line-height:1.45}
+.mascot b{display:block;color:#566eaa;margin-bottom:2px}
+.mascot-face{font-size:34px;filter:drop-shadow(0 3px 2px #687ba522)}
+.mascot-friends{display:flex;gap:6px;align-items:center}
+.mascot-friends span{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;background:#fff;border:1px solid #e8eaf4;font-size:22px;box-shadow:0 4px 10px #66769b12}
+.guide-strip{display:flex;align-items:center;gap:13px;padding:13px 17px;margin:24px 0 8px;border:1px solid #e5e8f4;border-radius:17px;background:linear-gradient(90deg,#fff,#f7f4ff);box-shadow:0 5px 16px #536a9a0b}
+.guide-avatar{font-size:29px;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:#eaf1ff}
+.guide-strip b{display:block;font-size:13px;color:#536b9f}
+.guide-strip small{display:block;color:#8490a8;font-size:11px;margin-top:3px}
+.guide-stars{margin-left:auto;color:#d6a64f;letter-spacing:5px;font-size:20px}
+@media(max-width:850px){.mascot-stage{flex-wrap:wrap}.mascot{max-width:100%}}
+@media(max-width:480px){.mascot-friends{width:100%;justify-content:flex-end}.guide-stars{display:none}}
+
+</style>
+</head>
+<body>
+<div class="shell">
+ <header class="topbar">
+  <div class="brand"><div class="logo">⌘</div><div>CODE QUEST <span style="color:var(--cyan)">/</span> ARENA</div></div>
+  <div class="pill">GRADE 1 · UNIT 2 · PROGRAMMING FUNDAMENTALS</div>
+ </header>
+ <section class="hero">
+  <div class="hero-main">
+   <div class="eyebrow">Your next level starts here</div>
+   <h1>Think. Code.<br><span>Conquer.</span></h1>
+   <p>Challenge yourself with the toughest questions from the Unit 2 question bank. Pick a lesson, solve each challenge, then reveal the answer when you're ready.</p>
+   <div class="mascot-stage">
+    <div class="mascot speech"><span class="mascot-face">🦊</span><span><b>Byte says:</b> Ready to level up? Pick a challenge and show what you know!</span></div>
+    <div class="mascot-friends"><span title="Panda">🐼</span><span title="Pixel the robot">🤖</span><span title="Loop the alien">👾</span><span title="Nova the cat">🐱</span></div>
+   </div>
+  </div>
+  <aside class="stats">
+   <div class="statline"><span>QUESTS COMPLETED</span><span class="xp" id="xp">0 XP</span></div>
+   <div><div class="statnum"><span id="done">0</span><span style="font-size:18px;color:var(--muted)"> / <span id="total">0</span></span></div><div class="progress"><div id="bar"></div></div></div>
+   <div class="statline"><span>YOUR PROGRESS</span><strong id="percent" style="color:var(--cyan)">0%</strong></div>
+  </aside>
+ </section>
+ <div class="toolbar">
+  <input class="search" id="search" type="search" placeholder="Search questions, keywords or question number...">
+  <button class="random" id="randomBtn">⚡ Random challenge</button>
+ </div>
+ <div class="guide-strip"><span class="guide-avatar">🤖</span><div><b>Hey, Code Explorer!</b><small>Your mission: collect XP, complete quests, and become a coding legend.</small></div><span class="guide-stars">✦ ✧ ✦</span></div>
+ <nav class="lesson-grid" id="lessons"></nav>
+ <div class="section-head">
+  <div><div class="eyebrow">Challenge deck</div><h2 id="heading">All lessons</h2><p id="subheading">Choose a challenge and test your understanding.</p></div>
+  <div class="count" id="shown"></div>
+ </div>
+ <main class="cards" id="cards"></main>
+ <div class="footer">Built from the uploaded WE Schools Unit 2 Question Bank and Programming Fundamentals textbook.<br>Answers stay hidden until you choose to reveal them.</div>
+</div>
+<script>
+const lessons = [
+ {id:"all",short:"ALL QUESTS",name:"All lessons",desc:"Every challenge in one place"},
+ {id:"l1",short:"LESSON 01",name:"Programming Concepts",desc:"Languages, algorithms & Python basics"},
+ {id:"l2",short:"LESSON 02",name:"Data & Operators",desc:"Data types, expressions & calculations"},
+ {id:"l3",short:"LESSON 03",name:"Decisions & Loops",desc:"Conditions, iteration & control flow"},
+ {id:"l4",short:"LESSON 04",name:"Collections & Functions",desc:"Lists, tuples, dictionaries & functions"},
+ {id:"l5",short:"LESSON 05",name:"Errors & Applications",desc:"Debugging, validation & safe programs"}
+];
+const Q = (id,lesson,question,answer,code="",difficulty="HARD",options=[])=>({id,lesson,question,answer,code,difficulty,options});
+const questions = [
+Q(47,"l1","Explain the difference between an algorithm and a flowchart.","Algorithm: a step-by-step list of instructions, written in words, that solves a problem.\\nFlowchart: a diagram that shows the same steps with symbols and arrows. Both help us understand the logic before writing code."),
+Q(46,"l1","Compare high-level and low-level programming languages.","High-level languages (for example Python) are easier for people to read, write and fix, and can run on different computers with few changes. They are usually slower because code must be translated.\\nLow-level languages (machine language and Assembly) work close to hardware, give direct control of memory, are harder to read and usually faster."),
+Q(55,"l1","What is a program? Write the six building blocks used to build programs.","A program is a set of instructions written in a programming language that tells a computer what to do.\\nSix building blocks: Input, Output, Sequence, Decision (condition), Repetition (loop) and Reuse."),
+Q(56,"l1","Name the three basic kinds of instructions in programming. Give an example of each.","1. Sequential: steps done one after another (enter two numbers, add them, show the result).\\n2. Conditional: an action depends on a condition (if a number is even, show Even; otherwise, show Odd).\\n3. Iterative: steps repeat (print the numbers from 1 to 100)."),
+Q(57,"l1","Write the rules for naming a variable in Python. Give one good name and one bad name.","Names are case-sensitive. They can contain letters, numbers and underscores (_), but cannot start with a number. They should be meaningful.\\nGood: student_name. Bad: 2name."),
+Q(161,"l1","Write the steps to install Python and get ready to code.","1. Go to python.org.\\n2. Download the latest Python version for your operating system.\\n3. Run the installer and tick “Add Python to PATH”.\\n4. Click Install Now and wait for installation to finish.\\n5. Install and open an IDE such as VS Code.\\n6. Install the Python extension in VS Code.\\n7. Create hello.py, write print(\"Hello from VS Code!\"), save and run it."),
+Q(54,"l1","Explain the difference between using print() inside a function and using return.","print() only shows a value on the screen; the program cannot use that value again. return gives a value back to the place where the function was called, so it can be stored or used later.",'def add(a, b):\\n    return a + b\\ntotal = add(3, 7)'),
+Q(48,"l2","Explain the difference between int and float data types. Give examples.","int: whole numbers with no decimal point (42, -10, 0).\\nfloat: numbers with a decimal point (3.14, 25.75)."),
+Q(49,"l2","Explain the difference between / and // operators.","/ (division) gives a decimal answer. Example: 10 / 3 gives 3.3333...\\n// (floor division) gives only the whole-number part. Example: 10 // 3 gives 3."),
+Q(59,"l2","What is the order of operations in Python? Give an example.","1. Brackets ( )\\n2. Powers (**)\\n3. Multiplication and division from left to right\\n4. Addition and subtraction from left to right\\nExample: 2 + 3 * 4 gives 14, while (2 + 3) * 4 gives 20."),
+Q(60,"l2","Write the five groups of operators in Python. Give one example operator for each group.","1. Arithmetic: +, -, *, /, %, //, **\\n2. Assignment: =, +=, -=\\n3. Comparison: ==, !=, <, >, <=, >=\\n4. Logical: and, or, not\\n5. Bitwise: &, |, ^"),
+Q(73,"l2","What is the output of this code?", "3\\n1\\n100",'a = 10\\nb = 3\\nprint(a // b)\\nprint(a % b)\\nprint(a ** 2)'),
+Q(75,"l2","What is the output of this code?","14\\n20\\n16",'print(2 + 3 * 4)\\nprint((2 + 3) * 4)\\nprint(2 ** 3 * 2)'),
+Q(76,"l2","What is the output of this code?","True\\nFalse\\nTrue",'score = 85\\nprint(score >= 60)\\nprint(score == 100)\\nprint(score != 100)'),
+Q(58,"l2","Write the four basic data types in Python. Give an example of each.","int: 42\\nfloat: 3.14\\nstr: \"Hello\"\\nbool: True"),
+Q(61,"l3","What do if, elif and else do in Python?","if checks a condition and runs its code if the condition is True.\\nelif checks another condition if earlier conditions are False.\\nelse runs when none of the earlier conditions is True."),
+Q(62,"l3","The range() function can use up to three values. Explain the meaning of each one.","Start: the first number in the sequence (default 0).\\nStop: the number where the sequence ends; it is not included.\\nStep: how much the number increases each time (default 1)."),
+Q(66,"l3","What is the output of this code?","Good\\nThe first true condition is score >= 70, so Python skips the other branches.",'score = 75\\nif score >= 90:\\n    print(\"Excellent\")\\nelif score >= 70:\\n    print(\"Good\")\\nelif score >= 50:\\n    print(\"Pass\")\\nelse:\\n    print(\"Fail\")'),
+Q(67,"l3","What is the output of this code?","1\\n2\\n4\\n5\\ncontinue skips the number 3 only.",'for i in range(1, 6):\\n    if i == 3:\\n        continue\\n    print(i)'),
+Q(68,"l3","What is the output of this code?","1\\n2\\n3\\n4\\nbreak stops the loop when i is 5.",'for i in range(1, 10):\\n    if i == 5:\\n        break\\n    print(i)'),
+Q(69,"l3","What is the output of this code?","5\\n4\\n3\\n2\\n1",'x = 5\\nwhile x > 0:\\n    print(x)\\n    x -= 1'),
+Q(70,"l3","What is the output of this code?","0\\n3\\n6\\n9\\n12\\nThe stop number 15 is not included.",'for i in range(0, 15, 3):\\n    print(i)'),
+Q(50,"l3","Explain the difference between break and continue.","break stops the loop completely.\\ncontinue skips the rest of the current turn and moves to the next turn.\\nFor range(5) with i == 3: break prints 0 1 2; continue prints 0 1 2 4."),
+Q(51,"l3","Explain the difference between a for loop and a while loop.","for is used to repeat a known number of times or go through items in a list/range.\\nwhile repeats as long as its condition is True and stops when the condition becomes False."),
+Q(90,"l3","Complete the missing parts so the program prints from 1 to the number entered.","Missing parts: <= and +=.",'number = int(input(\"Enter a number: \"))\\ncount = 1\\nwhile count ___ number:\\n    print(count)\\n    count ___ 1'),
+Q(52,"l4","Explain the difference between a list and a tuple.","List: written with [ ], keeps order and can be changed (mutable).\\nTuple: written with ( ), keeps order and cannot be changed after it is made (immutable)."),
+Q(63,"l4","What is a dictionary in Python? Give an example.","A dictionary keeps data as key-value pairs. Each key is different and is used to get its value.",'student = {\"name\": \"user1\", \"age\": 17, \"grade\": \"A\"}'),
+Q(53,"l4","Explain positional arguments and keyword arguments, with examples.","Positional arguments: values go in the same order as the parameters. Example: greet(\"user1\", 25).\\nKeyword arguments: values are given with parameter names, so order does not matter. Example: greet(age=25, name=\"user1\")."),
+Q(65,"l4","Why do we use functions in programs? Write three benefits.","1. Code reusability: write code once and use it many times.\\n2. Better organization: divide a big program into small parts.\\n3. Fewer errors: less repeated code makes the program easier to maintain."),
+Q(71,"l4","What is the output of this code?","{'model': 'A1', 'color': 'blue', 'size': 16}",'car = {\"model\": \"A1\", \"color\": \"red\"}\\ncar[\"color\"] = \"blue\"\\ncar[\"size\"] = 16\\nprint(car)'),
+Q(72,"l4","What is the output of this code?","['apple', 'mango', 'cherry', 'orange']",'fruits = [\"apple\", \"banana\", \"cherry\"]\\nfruits.append(\"orange\")\\nfruits.insert(1, \"mango\")\\nfruits.remove(\"banana\")\\nprint(fruits)'),
+Q(83,"l4","The program prints None instead of 5. Find the mistake and write the corrected code.","The function has no return statement, so the result is not given back. Add return a + b.",'def add(a, b):\\n    a + b\\nresult = add(2, 3)\\nprint(result)'),
+Q(84,"l4","Why does this code cause an error? Write a correct version.","A tuple cannot be changed after it is made. Use a list if the data must change.",'colors = (\"red\", \"green\", \"blue\")\\ncolors[1] = \"yellow\"'),
+Q(105,"l4","Write a function called multiply that takes two numbers and gives back their product. Call it and print the result.","",'def multiply(a, b):\\n    return a * b\\n\\nresult = multiply(5, 4)\\nprint(result)'),
+Q(106,"l4","Write a function calculate_average that takes a list of numbers and gives back the average.","",'def calculate_average(numbers):\\n    return sum(numbers) / len(numbers)\\n\\nprint(calculate_average([10, 20, 30]))'),
+Q(107,"l4","Make a list named colors with four colors. Print the first and the last color.","",'colors = [\"red\", \"green\", \"blue\", \"yellow\"]\\nprint(colors[0])\\nprint(colors[-1])'),
+Q(179,"l4","The registry accepts the same ID twice. Explain the problem and write a better version.","A list allows duplicate values and the program does not check whether the ID already exists. Use a set and check membership before adding.",'ids = [1001, 1002]\\nids.append(1001)\\nprint(ids)'),
+Q(245,"l5","What are errors in Python? Why must programmers know the different types of errors?","Errors are problems that prevent a program from running correctly. Knowing the types helps programmers find the problem faster and fix it in the right way."),
+Q(246,"l5","Explain the difference between Syntax, Runtime and Logical errors. Give an example of each.","Syntax: Python rules are broken, so the program cannot run. Example: print(\"Hello\".\\nRuntime: happens while the program runs. Example: 10 / 0.\\nLogical: the program runs but the result is wrong, with no message. Example: area = length + width."),
+Q(248,"l5","What are runtime errors (exceptions)? Write three common types with an example of each.","A runtime error happens while the program is running. Examples:\\nZeroDivisionError: 10 / 0\\nTypeError: \"20\" + 5\\nIndexError: numbers = [1, 2, 3], then numbers[5]."),
+Q(249,"l5","What is a logical error? Why is it hard to find? Give an example.","A logical error happens when the program runs but gives a wrong result. It is hard to find because the code is valid Python, so Python shows no error message.",'length = 5\\nwidth = 10\\narea = length + width\\nprint(area)\\n# It prints 15, but the correct area is 50.'),
+Q(250,"l5","What are try and except for? Write a simple example.","try-except handles errors so the program does not crash. The try block contains code that may cause an error; except runs if that error happens.",'try:\\n    number = 10 / 0\\nexcept ZeroDivisionError:\\n    print(\"Cannot divide by zero\")'),
+Q(252,"l5","What is debugging? How does the error message from Python help in debugging?","Debugging is finding and fixing errors in code. The error message tells us the type of error and where it is, helping us find the line and fix it."),
+Q(255,"l5","The program should calculate the average of a = 80 and b = 90, but it prints 125.0. Identify the error and correct the code.","Logical error: Python divides b by 2 first and then adds a. Use (a + b) / 2 to calculate the correct average, 85.0.",'a = 80\\nb = 90\\navg = a + b / 2\\nprint(avg)'),
+Q(263,"l5","What is the output of this code?","Start\\nError\\nThe line print(\"End\") is skipped because the error stops the try block.",'try:\\n    print(\"Start\")\\n    x = 10 / 0\\n    print(\"End\")\\nexcept ZeroDivisionError:\\n    print(\"Error\")'),
+Q(267,"l5","What is the output? Is the result correct for the area of a rectangle? Explain.","Output: 15. The result is wrong; the area should be 50. This is a logical error because the code is valid Python and Python shows no error message.",'length = 5\\nwidth = 10\\narea = length + width\\nprint(area)'),
+Q(272,"l5","The program crashes when the user types 0 as the second number. Identify the error and correct the code.","Runtime error (ZeroDivisionError). Protect the division with try-except.",'a = int(input(\"First number: \"))\\nb = int(input(\"Second number: \"))\\ntry:\\n    print(a / b)\\nexcept ZeroDivisionError:\\n    print(\"Cannot divide by zero\")'),
+Q(273,"l5","The program should print all the fruits, but it ends with an error. Identify the error and write the corrected code.","Runtime error (IndexError): the loop reaches position 3, which does not exist. Use range(len(fruits)) or iterate directly over the list.",'fruits = [\"apple\", \"banana\", \"cherry\"]\\nfor i in range(len(fruits) + 1):\\n    print(fruits[i])'),
+Q(287,"l5","Write a function get_valid_grade() that keeps asking for a grade until the user types a whole number from 0 to 100. Use try-except and a while True loop. The function gives the grade back.","",'def get_valid_grade():\\n    while True:\\n        try:\\n            score = input(\"Enter the grade (0-100): \")\\n            val = int(score)\\n            if 0 <= val <= 100:\\n                return val\\n            else:\\n                print(\"Input error: Grade must be between 0 and 100.\")\\n        except ValueError:\\n            print(\"Type error: Please enter a valid whole number.\")'),
+Q(291,"l5","Write a program that reads two numbers and prints their average. Make sure the average is correct.","",'a = float(input(\"First number: \"))\\nb = float(input(\"Second number: \"))\\nprint(\"Average:\", (a + b) / 2)'),
+Q(198,"l5","Write a function select_winner(student_list). If the list is empty, it prints an alert and gives back None. Otherwise, it picks a random item, prints it and gives it back.","",'import random\\ndef select_winner(student_list):\\n    if len(student_list) == 0:\\n        print(\"System Alert: No students available in the list.\")\\n        return None\\n    winner = random.choice(student_list)\\n    print(\"The winner for this week is:\", winner)\\n    return winner')
+];
+let activeLesson="all", solved=new Set();
+const lessonEl=document.getElementById("lessons"),cardsEl=document.getElementById("cards");
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function renderLessons(){
+ const icons={all:"🌟",l1:"🧠",l2:"🔢",l3:"🚦",l4:"🧩",l5:"🛠️"};
+ lessonEl.innerHTML=lessons.map(l=>`<button class="lesson-tab ${activeLesson===l.id?'active':''}" data-id="${l.id}"><span class="lesson-icon">${icons[l.id]||"✨"}</span><b>${l.short}</b><span>${l.name}</span></button>`).join("");
+ lessonEl.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{activeLesson=b.dataset.id;render();}));
+}
+function render(){
+ renderLessons();
+ const term=document.getElementById("search").value.toLowerCase().trim();
+ const filtered=questions.filter(q=>(activeLesson==="all"||q.lesson===activeLesson)&&(!term||(`${q.id} ${q.question} ${q.answer} ${q.code}`).toLowerCase().includes(term)));
+ const current=lessons.find(l=>l.id===activeLesson);
+ document.getElementById("heading").textContent=current.name;
+ document.getElementById("subheading").textContent=current.desc;
+ document.getElementById("shown").textContent=`${filtered.length} CHALLENGES`;
+ cardsEl.innerHTML=filtered.length?filtered.map(q=>{
+  const lesson=lessons.find(l=>l.id===q.lesson);
+  return `<article class="card ${solved.has(q.id)?'solved':''}" id="q-${q.id}">
+   <div class="card-top"><span class="qtag">QUEST #${q.id} · ${lesson.short}</span><span class="difficulty">${q.difficulty}</span></div>
+   <div class="question">${esc(q.question)}</div>
+   ${q.options.length?`<div class="options">${q.options.map(o=>`<div class="option">${esc(o)}</div>`).join("")}</div>`:""}
+   ${q.code && ![105,106,107,287,291,198].includes(q.id)?`<pre class="code">${esc(q.code)}</pre>`:""}
+   <div class="actions"><button class="answer-btn" data-answer="${q.id}">◉ Show answer</button><button class="solved-btn ${solved.has(q.id)?'done':''}" data-solved="${q.id}">${solved.has(q.id)?"✓ Completed":"+ Mark solved"}</button></div>
+   <div class="answer" id="a-${q.id}">${q.answer?esc(q.answer):"Write your own solution, then compare it with the code below."}${q.answer && q.code && [105,106,107,287,291,198].includes(q.id)?"":""}${q.answer===""?"\\n\\nSample solution:":""}${q.answer===""?"\\n"+esc(q.code):""}</div>
+  </article>`;
+ }).join(""):`<div class="empty">No challenges found. Try another keyword or select a different lesson.</div>`;
+ cardsEl.querySelectorAll("[data-answer]").forEach(b=>b.addEventListener("click",()=>{
+  const a=document.getElementById("a-"+b.dataset.answer);a.classList.toggle("show");b.textContent=a.classList.contains("show")?"◎ Hide answer":"◉ Show answer";
+ }));
+ cardsEl.querySelectorAll("[data-solved]").forEach(b=>b.addEventListener("click",()=>{
+  const id=Number(b.dataset.solved);solved.has(id)?solved.delete(id):solved.add(id);render();
+ }));
+ updateStats();
+}
+function updateStats(){
+ document.getElementById("done").textContent=solved.size;
+ document.getElementById("total").textContent=questions.length;
+ document.getElementById("xp").textContent=(solved.size*25)+" XP";
+ const pct=Math.round(solved.size/questions.length*100);
+ document.getElementById("percent").textContent=pct+"%";
+ document.getElementById("bar").style.width=pct+"%";
+}
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("randomBtn").addEventListener("click",()=>{
+ const pool=questions.filter(q=>activeLesson==="all"||q.lesson===activeLesson);
+ const q=pool[Math.floor(Math.random()*pool.length)];
+ document.getElementById("search").value="";
+ render();
+ document.getElementById("q-"+q.id)?.scrollIntoView({behavior:"smooth",block:"center"});
+ const a=document.getElementById("a-"+q.id);a.classList.add("show");
+ const b=document.querySelector(`[data-answer="${q.id}"]`);if(b)b.textContent="◎ Hide answer";
+});
+document.getElementById("total").textContent=questions.length;
+render();
+</script>
+</body>
+</html>
